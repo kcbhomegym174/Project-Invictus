@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Dashboard esame inVictus</title>
+<style>
+:root{
+  --bg:#f6f5f2; --surface:#ffffff; --surface-2:#f0eee9; --text:#1c1b19; --muted:#6b675f;
+  --border:#e2dfd8; --accent:#c8102e; --accent-ink:#ffffff; --accent-soft:#fbe6e9;
+  --ok:#1f7a4d; --ok-bg:#e6f4ec; --ko:#b42318; --ko-bg:#fdecea; --warn:#9a6700; --warn-bg:#fff4d6;
+  --radius:14px; --shadow:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141413; --surface:#1d1c1a; --surface-2:#262522; --text:#f1efea; --muted:#a29d93;
+    --border:#34322e; --accent:#ff4d5e; --accent-ink:#141413; --accent-soft:#3a1a1f;
+    --ok:#5cc98f; --ok-bg:#16301f; --ko:#ff7a6e; --ko-bg:#3a1a17; --warn:#f2c14e; --warn-bg:#3a2e10;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141413; --surface:#1d1c1a; --surface-2:#262522; --text:#f1efea; --muted:#a29d93;
+  --border:#34322e; --accent:#ff4d5e; --accent-ink:#141413; --accent-soft:#3a1a1f;
+  --ok:#5cc98f; --ok-bg:#16301f; --ko:#ff7a6e; --ko-bg:#3a1a17; --warn:#f2c14e; --warn-bg:#3a2e10;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 60px}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+header h1{font-size:1.5rem;line-height:1.25;margin:0 0 4px}
+header p{margin:0;color:var(--muted);font-size:.95rem}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:8px 13px}
+button:hover{border-color:var(--muted)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+a.btnlink{border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:8px 13px;text-decoration:none;display:inline-flex;align-items:center}
+a.btnlink:hover{border-color:var(--muted)}
+.controls{display:flex;flex-wrap:wrap;gap:8px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(12,1fr)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);grid-column:span 12}
+.card h2{font-size:1.02rem;font-weight:600;margin:0 0 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card h2 .sub{font-weight:400;color:var(--muted);font-size:.88rem;margin-left:auto}
+@media (min-width:760px){ .c4{grid-column:span 4} .c6{grid-column:span 6} .c8{grid-column:span 8} }
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.tile{background:var(--surface-2);border-radius:10px;padding:12px}
+.tile b{display:block;font-size:1.7rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.tile b small{font-size:.9rem;color:var(--muted);font-weight:500}
+.tile span{font-size:.8rem;color:var(--muted)}
+.tile.hero{background:var(--accent-soft)}
+.tile.hero b{color:var(--accent)}
+.track{height:8px;background:var(--surface-2);border-radius:99px;overflow:hidden;position:relative}
+.fill{height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
+.fill.ok{background:var(--ok)}
+.row{display:flex;gap:10px;align-items:center;font-size:.9rem;margin:8px 0;flex-wrap:wrap}
+.row .lab{min-width:150px}
+.row .track{flex:1;min-width:120px}
+.row .val{min-width:120px;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums;font-size:.85rem}
+.chip{display:inline-block;background:var(--surface-2);border:1px solid var(--border);border-radius:999px;padding:2px 9px;font-size:.78rem;color:var(--muted);white-space:nowrap}
+.chip.ok{background:var(--ok-bg);color:var(--ok);border-color:transparent}
+.chip.ko{background:var(--ko-bg);color:var(--ko);border-color:transparent}
+.chip.warn{background:var(--warn-bg);color:var(--warn);border-color:transparent}
+.chip.acc{background:var(--accent-soft);color:var(--accent);border-color:transparent;font-weight:600}
+.task{display:grid;grid-template-columns:1fr auto;gap:8px 14px;align-items:center;padding:12px 0;border-top:1px solid var(--border)}
+.task:first-child{border-top:0}
+.task .t{font-weight:600}
+.task .m{color:var(--muted);font-size:.85rem}
+.task .m a{color:inherit}
+@media (max-width:600px){ .task{grid-template-columns:1fr} }
+.marks{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:.85rem}
+.marks label{display:inline-flex;gap:5px;align-items:center;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:4px 8px;cursor:pointer;white-space:nowrap}
+.marks label.on{border-color:var(--ok);background:var(--ok-bg);color:var(--ok)}
+.marks label.low{border-color:var(--warn);background:var(--warn-bg);color:var(--warn)}
+.marks input[type=checkbox]{accent-color:var(--ok);margin:0}
+.marks input[type=number]{width:3.8em;font:inherit;font-size:.85rem;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text);padding:2px 4px}
+.note{margin:12px 0 0;padding:10px 12px;border-radius:10px;background:var(--surface-2);font-size:.9rem}
+.note.warn{background:var(--warn-bg)}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:8px 8px;border-top:1px solid var(--border);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:.8rem;border-top:0}
+tr.now{background:var(--accent-soft)}
+tr.past{color:var(--muted)}
+td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+.bars{display:flex;gap:2px;align-items:flex-end;height:46px;margin:8px 0 4px}
+.bars div{flex:1;background:var(--muted);opacity:.45;border-radius:3px 3px 0 0;min-height:2px}
+.bars div.now{background:var(--accent);opacity:1}
+.bars div.done{background:var(--ok);opacity:.9}
+.bars div.sim{background:var(--warn);opacity:.7}
+.legend{font-size:.78rem;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+textarea{width:100%;min-height:110px;font:12.5px/1.45 ui-monospace,Consolas,monospace;background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px;resize:vertical}
+.hint{font-size:.85rem;color:var(--muted);margin:6px 0}
+details summary{cursor:pointer;color:var(--muted);font-size:.9rem;margin:6px 0}
+ul.clean{list-style:none;margin:0;padding:0}
+ul.clean li{display:flex;gap:10px;align-items:baseline;padding:7px 0;border-top:1px solid var(--border);font-size:.92rem;flex-wrap:wrap}
+ul.clean li:first-child{border-top:0}
+ul.clean li .d{color:var(--muted);font-size:.82rem;min-width:88px;font-variant-numeric:tabular-nums}
+ul.clean li .d.ko{color:var(--ko)}
+a{color:var(--accent)}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>🎯 Dashboard esame inVictus Personal Trainer</h1>
+      <p id="subtitle"></p>
+    </div>
+    <div class="controls">
+      <a class="btnlink" id="lnkSchede" href="../STUDIO/SCHEDE/INDICE.html">📚 Schede</a>
+      <button id="btnTheme" type="button">Tema</button>
+      <button id="btnExport" type="button" class="primary">Copia stato per Claude</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="card c4">
+      <h2>⏳ Conto alla rovescia</h2>
+      <div class="tiles" id="countdown"></div>
+      <p class="note" id="paceNote"></p>
+    </section>
+
+    <section class="card c8">
+      <h2>📍 Obiettivo della settimana <span class="sub" id="weekRange"></span></h2>
+      <div id="thisWeek"></div>
+      <div id="weekNote"></div>
+      <details id="nextWeekBox"><summary>Prossima settimana ›</summary><div id="nextWeek"></div></details>
+    </section>
+
+    <section class="card c6">
+      <h2>📈 Avanzamento per sezione <span class="sub">pagine lette · peso sull'esame</span></h2>
+      <div id="sections"></div>
+      <p class="hint">Una sezione è "verificata" quando ogni capitolo ha letto ✓ e quiz ≥ 80%.</p>
+    </section>
+
+    <section class="card c6">
+      <h2>🧮 Matematica dell'esame</h2>
+      <div class="tiles" id="mathTiles"></div>
+      <p class="note">80 domande in 90' (≈ 67" ciascuna), errore = 0 punti → <b>rispondere sempre</b>. Soglia reale <b>47/80</b>, obiettivo di sicurezza <b>56/80</b> (70%). Nei quiz punta all'<b>80%</b>: all'esame si rende di solito meno che a casa.</p>
+      <div id="simList"></div>
+    </section>
+
+    <section class="card c6">
+      <h2>🔁 Ripassi e punteggi quiz</h2>
+      <div id="ripassi"></div>
+      <div id="quizScores"></div>
+    </section>
+
+    <section class="card c6">
+      <h2>📅 Scadenze</h2>
+      <ul class="clean" id="deadlines"></ul>
+    </section>
+
+    <section class="card">
+      <h2>🗓️ Piano completo <span class="sub">31 settimane sab→ven · pagine per settimana</span></h2>
+      <div class="bars" id="bars"></div>
+      <div class="legend"><span><i style="background:var(--ok)"></i>fatta</span><span><i style="background:var(--accent)"></i>in corso</span><span><i style="background:var(--muted);opacity:.45"></i>da fare</span><span><i style="background:var(--warn)"></i>ripasso e simulazioni</span></div>
+      <div style="overflow-x:auto;margin-top:10px"><table id="planTable"></table></div>
+    </section>
+
+    <section class="card">
+      <h2>💾 Stato</h2>
+      <p class="hint">Le spunte restano salvate in questo browser. <b>Copia stato per Claude</b> genera un rapporto: incollalo in chat e Claude aggiorna il cervello (HUB, LOG_ERRORI). Il telefono e il PC hanno spunte separate: per allinearli copia il rapporto su un dispositivo, incollalo qui sotto sull'altro e premi <b>Importa</b>.</p>
+      <textarea id="io" placeholder="Il rapporto compare qui…"></textarea>
+      <div class="controls" style="margin-top:8px"><button id="btnImport" type="button">Importa</button><button id="btnReset" type="button">Azzera tutto</button></div>
+    </section>
+  </div>
+</div>
+
+<script>
+/* ============================ DATI (Claude aggiorna qui) ============================ */
+const DATI = {
+  esame: "2027-06-06",
+  inizio: "2026-10-31",
+  domande: 80, soglia: 47, sicurezza: 56,
+  sezioni: [
+    { id:"II",   nome:"Vol.1 Sez. II Fisiologia",       pagine:16,  dom:2 },
+    { id:"IV",   nome:"Sez. IV Nutrizione",              pagine:120, dom:13 },
+    { id:"V",    nome:"Sez. V Ricomposizione corporea",  pagine:184, dom:20 },
+    { id:"VI",   nome:"Sez. VI Teoria dell'allenamento", pagine:214, dom:23 },
+    { id:"VIII", nome:"Sez. VIII Metodo inVictus",       pagine:106, dom:12 },
+    { id:"IX",   nome:"Sez. IX Programmi",               pagine:94,  dom:10 }
+  ],
+  /* stato materiale: 🟨 solo slide · 🟧 slide + libro · ✍️ nuovo stile (slide + libro) */
+  capitoli: [
+    { id:"V1-S2-C2", sez:"II", titolo:"Cap.2 I metabolismi energetici (§2.1, 2.2, 2.4)", pp:"95–109, 114–116", n:16, stato:"✍️", file:"../STUDIO/SCHEDE/VOLUME 1/SEZ.II Fisiologia/Cap.2 - I metabolismi energetici.html", quiz:"quiz/Q_V1-S2-C2.html" },
+
+    { id:"V2-S4-C1", sez:"IV", titolo:"Cap.1 Un corso di nutrizione per il PT", pp:"967–972", n:6, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.IV Nutrizione/Cap.1 - Un corso di nutrizione per il PT.html" },
+    { id:"V2-S4-C2", sez:"IV", titolo:"Cap.2 Fisiologia del dimagrimento, fabbisogno, esami del sangue", pp:"973–998", n:26, stato:"🟧", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.IV Nutrizione/Cap.2 - Fisiologia del dimagrimento.html" },
+    { id:"V2-S4-C3", sez:"IV", titolo:"Cap.3 I nutrienti", pp:"999–1044", n:46, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.IV Nutrizione/Cap.3 - I nutrienti.html" },
+    { id:"V2-S4-C4", sez:"IV", titolo:"Cap.4 Gli integratori", pp:"1045–1052", n:8, stato:"🟧", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.IV Nutrizione/Cap.4 - Gli integratori.html" },
+    { id:"V2-S4-C5", sez:"IV", titolo:"Cap.5 Le linee guida", pp:"1053–1068", n:16, stato:"🟧", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.IV Nutrizione/Cap.5 - Le linee guida.html" },
+    { id:"V2-S4-C6", sez:"IV", titolo:"Cap.6 I disturbi del comportamento alimentare", pp:"1069–1086", n:18, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.IV Nutrizione/Cap.6 - I disturbi del comportamento alimentare.html" },
+
+    { id:"V2-S5-C1", sez:"V", titolo:"Intro + Cap.1 Il modello di riferimento", pp:"1089–1126", n:38, stato:"🟧", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.V Ricomposizione corporea/Intro e Cap.1 - Il modello di riferimento.html" },
+    { id:"V2-S5-C2", sez:"V", titolo:"Cap.2 Con i macro: cut, bulk, consolidamento", pp:"1127–1154", n:28, stato:"✍️", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.V Ricomposizione corporea/Cap.2 - Con i macro - cut, bulk, consolidamento.html" },
+    { id:"V2-S5-C3", sez:"V", titolo:"Cap.3 Senza macro: la dieta PLG", pp:"1155–1186", n:32, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.V Ricomposizione corporea/Cap.3 - Senza macro - la dieta PLG.html" },
+    { id:"V2-S5-C4", sez:"V", titolo:"Cap.4 Reverse diet", pp:"1187–1198", n:12, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.V Ricomposizione corporea/Cap.4 - Reverse diet.html" },
+    { id:"V2-S5-C5", sez:"V", titolo:"Cap.5 Il cardio nella ricomposizione", pp:"1199–1242", n:44, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.V Ricomposizione corporea/Cap.5 - Il cardio nella ricomposizione.html" },
+    { id:"V2-S5-C6", sez:"V", titolo:"Cap.6 Le attività metaboliche e l'EPOC", pp:"1243–1262", n:20, stato:"🟧", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.V Ricomposizione corporea/Cap.6 - Le attività metaboliche e l'EPOC.html" },
+    { id:"V2-S5-C7", sez:"V", titolo:"Cap.7 Le attività cardiovascolari in palestra", pp:"1263–1272", n:10, stato:"🟧", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.V Ricomposizione corporea/Cap.7 - Le attività cardiovascolari in palestra.html" },
+
+    { id:"V2-S6-C0", sez:"VI", titolo:"Intro L'allenamento istintivo", pp:"1319–1326", n:8, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VI Teoria dell'allenamento/Intro - L'allenamento istintivo.html" },
+    { id:"V2-S6-C1", sez:"VI", titolo:"Cap.1 GAS, supercompensazione, energia adattativa", pp:"1327–1338", n:12, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VI Teoria dell'allenamento/Cap.1 - GAS, supercompensazione, energia adattativa.html" },
+    { id:"V2-S6-C2", sez:"VI", titolo:"Cap.2 Le leggi fondamentali", pp:"1339–1346", n:8, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VI Teoria dell'allenamento/Cap.2 - Le leggi fondamentali.html" },
+    { id:"V2-S6-C5", sez:"VI", titolo:"Cap.5 L'allenamento come processo", pp:"1371–1378", n:8, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VI Teoria dell'allenamento/Cap.5 - L'allenamento come processo.html" },
+    { id:"V2-S6-C6", sez:"VI", titolo:"Cap.6 Periodizzazione", pp:"1379–1394", n:16, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VI Teoria dell'allenamento/Cap.6 - Periodizzazione.html" },
+    { id:"V2-S6-C7", sez:"VI", titolo:"Cap.7 I mattoni e la progressione lineare", pp:"1395–1412", n:18, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VI Teoria dell'allenamento/Cap.7 - I mattoni e la progressione lineare.html" },
+    { id:"V2-S6-C8", sez:"VI", titolo:"Cap.8 Schemi a cedimento", pp:"1413–1440", n:28, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VI Teoria dell'allenamento/Cap.8 - Schemi a cedimento.html" },
+    { id:"V2-S6-C9", sez:"VI", titolo:"Cap.9 Percentuali di carico, buffer, scala RPE", pp:"1441–1456", n:16, stato:"🟧", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VI Teoria dell'allenamento/Cap.9 - Percentuali di carico, buffer, scala RPE.html" },
+    { id:"V2-S6-C10", sez:"VI", titolo:"Cap.10 Schemi non a cedimento", pp:"1457–1480", n:24, stato:"🟧", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VI Teoria dell'allenamento/Cap.10 - Schemi non a cedimento.html" },
+    { id:"V2-S6-C11", sez:"VI", titolo:"Cap.11 Organizzare una seduta", pp:"1481–1498", n:18, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VI Teoria dell'allenamento/Cap.11 - Organizzare una seduta.html" },
+    { id:"V2-S6-C12", sez:"VI", titolo:"Cap.12 Microciclo e mesociclo", pp:"1499–1518", n:20, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VI Teoria dell'allenamento/Cap.12 - Microciclo e mesociclo.html" },
+    { id:"V2-S6-CA", sez:"VI", titolo:"App.A Overtraining", pp:"1519–1532", n:14, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VI Teoria dell'allenamento/App.A - Overtraining.html" },
+    { id:"V2-S6-CB", sez:"VI", titolo:"App.B Preparazione fisica", pp:"1533–1556", n:24, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VI Teoria dell'allenamento/App.B - Preparazione fisica.html" },
+    { id:"V2-S6-CF", sez:"VI", titolo:"Focus Sheiko e Simmons (solo slide)", pp:"—", n:0, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VI Teoria dell'allenamento/Focus - Sheiko e Simmons (solo slide).html" },
+
+    { id:"V2-S8-C1", sez:"VIII", titolo:"Cap.1 Il Metodo inVictus (8×8, diario, 3×6)", pp:"1683–1706", n:24, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VIII Metodo inVictus/Cap.1 - Il Metodo inVictus (8x8, diario, 3x6).html" },
+    { id:"V2-S8-C2", sez:"VIII", titolo:"Cap.2 I 10 principi", pp:"1707–1728", n:22, stato:"🟧", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VIII Metodo inVictus/Cap.2 - I 10 principi.html" },
+    { id:"V2-S8-C3", sez:"VIII", titolo:"Cap.3 Tipologie di stimolo e fattori dell'ipertrofia", pp:"1729–1740", n:12, stato:"🟧", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VIII Metodo inVictus/Cap.3 - Tipologie di stimolo e fattori dell'ipertrofia.html" },
+    { id:"V2-S8-C4", sez:"VIII", titolo:"Cap.4 I parametri di una scheda", pp:"1741–1756", n:16, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VIII Metodo inVictus/Cap.4 - I parametri di una scheda.html" },
+    { id:"V2-S8-C5", sez:"VIII", titolo:"Cap.5 Buffer e cedimento", pp:"1757–1764", n:8, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VIII Metodo inVictus/Cap.5 - Buffer e cedimento.html" },
+    { id:"V2-S8-C6", sez:"VIII", titolo:"Cap.6 Le progressioni", pp:"1765–1774", n:10, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VIII Metodo inVictus/Cap.6 - Le progressioni.html" },
+    { id:"V2-S8-C7", sez:"VIII", titolo:"Cap.7 Le fondamenta di un programma e le split", pp:"1775–1788", n:14, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.VIII Metodo inVictus/Cap.7 - Le fondamenta di un programma e le split.html" },
+
+    { id:"V2-S9-C0", sez:"IX", titolo:"Intro I 5 pilastri e per chi", pp:"1791–1796", n:6, stato:"🟧", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.IX Programmi/Intro - I 5 pilastri e per chi.html" },
+    { id:"V2-S9-C1", sez:"IX", titolo:"Cap.1 Programmi per l'uomo", pp:"1797–1850", n:54, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.IX Programmi/Cap.1 - Programmi per l'uomo.html" },
+    { id:"V2-S9-C2", sez:"IX", titolo:"Cap.2 Programmi per la donna", pp:"1851–1880", n:30, stato:"🟧", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.IX Programmi/Cap.2 - Programmi per la donna.html" },
+    { id:"V2-S9-CA", sez:"IX", titolo:"App.A Allenamento in dieta ipocalorica", pp:"1881–1884", n:4, stato:"🟨", file:"../STUDIO/SCHEDE/VOLUME 2/SEZ.IX Programmi/App.A - Allenamento in dieta ipocalorica.html" }
+  ],
+  /* settimane sab→ven. task: {cap, parte?, n?} oppure {sim:k, testo} oppure {testo} */
+  settimane: [
+    { da:"2026-10-31", task:[{cap:"V1-S2-C2"},{cap:"V2-S4-C1"}], nota:"Il capitolo del Vol.1 è già pronto nel nuovo stile: leggilo e fai il quiz. Poi foto della Sez. IV (cartelle 967-974, 994-1044, 1068-1086) e nuova chat per la Sez. IV." },
+    { da:"2026-11-07", task:[{cap:"V2-S4-C2"}] },
+    { da:"2026-11-14", task:[{cap:"V2-S4-C3", parte:"prima metà, pp. 999–1020", n:22}] },
+    { da:"2026-11-21", task:[{cap:"V2-S4-C3", parte:"seconda metà, pp. 1021–1044", n:24},{cap:"V2-S4-C4"}] },
+    { da:"2026-11-28", task:[{cap:"V2-S4-C5"}], nota:"Settimana leggera: ripassa gli errori dei quiz della Sez. IV." },
+    { da:"2026-12-05", task:[{cap:"V2-S4-C6"}], nota:"Chiusura Sez. IV: rifai i quiz sotto l'80%. Foto della Sez. V per la prossima chat." },
+    { da:"2026-12-12", task:[{cap:"V2-S5-C1"}], nota:"Capitolo lungo (38 pp.), ma l'Intro è discorsiva." },
+    { da:"2026-12-19", task:[{cap:"V2-S5-C2"}], nota:"Settimana di Natale: capitolo già pronto nel nuovo stile." },
+    { da:"2026-12-26", task:[{cap:"V2-S5-C3"}], nota:"Festività: se salti, recupera entro la settimana 10." },
+    { da:"2027-01-02", task:[{cap:"V2-S5-C4"},{cap:"V2-S5-C5", parte:"prima metà, pp. 1199–1220", n:22}] },
+    { da:"2027-01-09", task:[{cap:"V2-S5-C5", parte:"seconda metà, pp. 1221–1242", n:22}] },
+    { da:"2027-01-16", task:[{cap:"V2-S5-C6"},{cap:"V2-S5-C7"}], nota:"Chiusura Sez. V. Foto della Sez. VI (3 PDF di slide)." },
+    { da:"2027-01-23", task:[{cap:"V2-S6-C0"},{cap:"V2-S6-C1"},{cap:"V2-S6-C2"}] },
+    { da:"2027-01-30", task:[{cap:"V2-S6-C5"},{cap:"V2-S6-C6"}] },
+    { da:"2027-02-06", task:[{cap:"V2-S6-C7"},{cap:"V2-S6-C8", parte:"prima metà, pp. 1413–1426", n:14}] },
+    { da:"2027-02-13", task:[{cap:"V2-S6-C8", parte:"seconda metà, pp. 1427–1440", n:14},{cap:"V2-S6-C9"}] },
+    { da:"2027-02-20", task:[{cap:"V2-S6-C10"}] },
+    { da:"2027-02-27", task:[{cap:"V2-S6-C11"},{cap:"V2-S6-CF"}] },
+    { da:"2027-03-06", task:[{cap:"V2-S6-C12"},{cap:"V2-S6-CA"}] },
+    { da:"2027-03-13", task:[{cap:"V2-S6-CB"}], nota:"Chiusura Sez. VI. Foto della Sez. VIII." },
+    { da:"2027-03-20", task:[{cap:"V2-S8-C1"}] },
+    { da:"2027-03-27", task:[{cap:"V2-S8-C2"},{cap:"V2-S8-C3"}], nota:"Pasqua il 28 marzo." },
+    { da:"2027-04-03", task:[{cap:"V2-S8-C4"},{cap:"V2-S8-C5"},{cap:"V2-S8-C6"}] },
+    { da:"2027-04-10", task:[{cap:"V2-S8-C7"}], nota:"Chiusura Sez. VIII. ⚠ Candidatura: controlla il portale (nel 2025 apriva il 14/04). Tesina e prove pratiche devono essere pronte. Foto della Sez. IX." },
+    { da:"2027-04-17", task:[{cap:"V2-S9-C0"},{cap:"V2-S9-C1", parte:"prima metà, pp. 1797–1823", n:27}] },
+    { da:"2027-04-24", task:[{cap:"V2-S9-C1", parte:"seconda metà, pp. 1824–1850", n:27}] },
+    { da:"2027-05-01", task:[{cap:"V2-S9-C2"},{cap:"V2-S9-CA"}], nota:"Chiusura Sez. IX. Ultimi giorni per la candidatura (nel 2025 chiudeva il 7/05)." },
+    { da:"2027-05-08", task:[{sim:1, testo:"Simulazione 1: 80 domande in 90' (tutte le sezioni)"},{testo:"Ripasso Sez. IV e V dagli errori del LOG"}] },
+    { da:"2027-05-15", task:[{sim:2, testo:"Simulazione 2: 80 domande in 90'"},{testo:"Ripasso Sez. VI dagli errori del LOG"}] },
+    { da:"2027-05-22", task:[{sim:3, testo:"Simulazione 3: 80 domande in 90'"},{testo:"Ripasso Sez. VIII e IX dagli errori del LOG"}] },
+    { da:"2027-05-29", task:[{sim:4, testo:"Simulazione 4: 80 domande in 90'"},{testo:"NUMERI.md e TRAPPOLE.md a tappeto · sabato 5 giugno riposo"}] }
+  ],
+  scadenze: [
+    { data:"2026-11-06", titolo:"📷 Foto Sez. IV Nutrizione (78 pp)", nota:"pp. 967–974, 994–1044, 1068–1086 · poi chat Sez. IV per riscrittura e quiz" },
+    { data:"2026-12-11", titolo:"📷 Foto Sez. V Ricomposizione (121 pp)", nota:"pp. 1102–1126, 1153–1242, 1262–1267 · poi chat Sez. V" },
+    { data:"2027-01-22", titolo:"📷 Foto Sez. VI Teoria dell'allenamento (185 pp)", nota:"pp. 1319–1346, 1371–1452, 1482–1556 · blocco più pesante: inizia durante la Sez. V, per esempio nelle feste" },
+    { data:"2027-03-19", titolo:"📷 Foto Sez. VIII Metodo inVictus (71 pp)", nota:"pp. 1683–1706, 1742–1788 · poi chat Sez. VIII" },
+    { data:"2027-03-31", titolo:"Matricola (5 cifre) + account Gmail, Zoom, 2 dispositivi", nota:"area studente del portale" },
+    { data:"2027-04-14", titolo:"Tesina caso studio pronta", nota:"requisito di candidatura" },
+    { data:"2027-04-14", titolo:"Prove pratiche completate", nota:"requisito di candidatura" },
+    { data:"2027-04-14", titolo:"Apertura attesa candidatura all'appello", nota:"nel 2025: 14/04 → 07/05. Verificare nell'area Esami" },
+    { data:"2027-04-16", titolo:"📷 Foto Sez. IX Programmi (79 pp)", nota:"pp. 1798–1850, 1859–1884 · poi chat Sez. IX" },
+    { data:"2027-05-07", titolo:"Chiusura attesa candidatura", nota:"data 2025, da confermare" },
+    { data:"2027-05-08", titolo:"Inizio simulazioni complete", nota:"4 settimane, una a settimana" },
+    { data:"2027-06-06", titolo:"ESAME FINALE facilitato", nota:"80 domande · 90' · serve ≥ 47/80" }
+  ],
+  /* Claude copia qui dal LOG_ERRORI gli errori con ripasso in scadenza: {data:"2026-11-03", testo:"..."} */
+  ripassi: []
+};
+/* ============================ FINE DATI ============================ */
+
+const KEY = "invictus-dashboard-v1";
+/* Sul PC (file:) i link a schede e quiz funzionano; online (GitHub Pages) quei file non ci sono e i link si nascondono */
+const LOCALE = location.protocol === "file:";
+if (!LOCALE) { const l = document.getElementById("lnkSchede"); if (l) l.remove(); }
+const $ = s => document.querySelector(s);
+const D = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); };
+const D2 = dt => new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+const addDays = (dt, n) => { const x = new Date(dt); x.setDate(x.getDate()+n); return x; };
+const dayDiff = (a, b) => Math.round((D2(b) - D2(a)) / 86400000);
+const fmt = (dt, o={day:"numeric", month:"short"}) => dt.toLocaleDateString("it-IT", o);
+const fmtLong = dt => dt.toLocaleDateString("it-IT", {weekday:"long", day:"numeric", month:"long", year:"numeric"});
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const CAP = Object.fromEntries(DATI.capitoli.map(c => [c.id, c]));
+const PARAM = new URLSearchParams(location.search);
+const today = D2(PARAM.get("oggi") ? D(PARAM.get("oggi")) : new Date());
+const esame = D(DATI.esame);
+const TOT_PAG = DATI.sezioni.reduce((s,x) => s + x.pagine, 0);
+
+DATI.settimane.forEach((w, i) => {
+  w.n = i+1; w.start = D(w.da); w.end = addDays(w.start, 6);
+  w.pagine = w.task.reduce((s,t) => s + (t.cap ? (t.n ?? CAP[t.cap].n) : 0), 0);
+  w.sim = w.task.some(t => t.sim);
+});
+const W = DATI.settimane;
+
+let state = load();
+function load(){ try { return JSON.parse(localStorage.getItem(KEY)) || {cap:{}, sim:{}}; } catch(e){ return {cap:{}, sim:{}}; } }
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+const st = id => state.cap[id] || (state.cap[id] = {l:false, q:null, r:false});
+const completo = id => { const s = state.cap[id]; return !!(s && s.l && s.q != null && s.q >= 80); };
+const pagineLette = () => DATI.capitoli.filter(c => st(c.id).l).reduce((s,c) => s + c.n, 0);
+const pagineAttese = () => W.filter(w => w.end < today).reduce((s,w) => s + w.pagine, 0);
+
+function currentWeekIndex(){
+  if (today < W[0].start) return 0;
+  const i = W.findIndex(w => today >= w.start && today <= w.end);
+  return i >= 0 ? i : W.length; // oltre l'ultima = vigilia/esame
+}
+
+/* ---------- render ---------- */
+function render(){
+  const wi = currentWeekIndex();
+  const giorni = dayDiff(today, esame);
+  let weekendLeft = 0;
+  for (let d = new Date(today); d < esame; d = addDays(d, 1)) if (d.getDay() === 6) weekendLeft++;
+  const lette = pagineLette(), attese = pagineAttese(), delta = lette - attese;
+  const nComp = DATI.capitoli.filter(c => completo(c.id)).length;
+
+  $("#subtitle").textContent = `Oggi ${fmtLong(today)} · esame ${fmtLong(esame)} · Sez. III già superata nel parziale (13/20)`;
+
+  $("#countdown").innerHTML = `
+    <div class="tile hero"><b>${giorni}</b><span>giorni all'esame</span></div>
+    <div class="tile"><b>${wi < W.length ? wi+1 : "—"}<small>/${W.length}</small></b><span>settimana del piano</span></div>
+    <div class="tile"><b>${weekendLeft}</b><span>weekend rimasti</span></div>
+    <div class="tile"><b>${nComp}<small>/${DATI.capitoli.length}</small></b><span>capitoli verificati</span></div>
+    <div class="tile"><b>${lette}<small>/${TOT_PAG}</small></b><span>pagine lette</span></div>`;
+  const pn = $("#paceNote");
+  if (attese === 0) { pn.className = "note"; pn.innerHTML = `Si parte. Il piano prevede <b>~${Math.round(TOT_PAG/27)} pagine a settimana</b> per 27 settimane, poi 4 settimane di simulazioni.`; }
+  else if (delta >= 0) { pn.className = "note"; pn.innerHTML = `✅ <b>In linea</b>: ${lette} pagine lette contro ${attese} previste a oggi${delta > 0 ? ` (<b>+${delta}</b> di anticipo)` : ""}.`; }
+  else { pn.className = "note warn"; pn.innerHTML = `⚠️ <b>In ritardo di ${-delta} pagine</b> (${lette} lette, ${attese} previste a oggi). Recupera nelle settimane leggere, non in quelle delle simulazioni.`; }
+
+  // settimana corrente
+  if (wi < W.length) {
+    const w = W[wi];
+    $("#weekRange").textContent = `Sett. ${w.n} · sab ${fmt(w.start)} – ven ${fmt(w.end)} · ${w.pagine} pagine`;
+    $("#thisWeek").innerHTML = w.task.map(taskHTML).join("");
+    $("#weekNote").innerHTML = w.nota ? `<p class="note">${esc(w.nota)}</p>` : "";
+    const nx = W[wi+1];
+    $("#nextWeekBox").classList.toggle("hidden", !nx);
+    if (nx) $("#nextWeek").innerHTML = `<p class="hint">Sett. ${nx.n} · ${fmt(nx.start)} – ${fmt(nx.end)} · ${nx.pagine} pagine</p>` + nx.task.map(t => `<div class="task"><div><div class="t">${esc(taskTitle(t))}</div></div></div>`).join("");
+  } else {
+    $("#weekRange").textContent = giorni >= 0 ? "Vigilia" : "Esame passato";
+    $("#thisWeek").innerHTML = `<p class="note">${giorni >= 0 ? "Piano completato. Riposo, ripasso leggero di NUMERI.md e TRAPPOLE.md, dormire." : "In bocca al lupo per il risultato!"}</p>`;
+    $("#weekNote").innerHTML = ""; $("#nextWeekBox").classList.add("hidden");
+  }
+
+  // sezioni
+  $("#sections").innerHTML = DATI.sezioni.map(s => {
+    const caps = DATI.capitoli.filter(c => c.sez === s.id);
+    const l = caps.filter(c => st(c.id).l).reduce((a,c) => a + c.n, 0);
+    const done = caps.every(c => completo(c.id));
+    const pct = s.pagine ? Math.round(100*l/s.pagine) : 0;
+    return `<div class="row"><div class="lab">${esc(s.nome)}${done ? ' <span class="chip ok">✓ verificata</span>' : ""}</div><div class="track"><div class="fill${done?" ok":""}" style="width:${pct}%"></div></div><div class="val">${l}/${s.pagine} pp · ~${s.dom} dom.</div></div>`;
+  }).join("");
+
+  // matematica
+  const sims = Object.values(state.sim).filter(x => x && x.score != null);
+  const best = sims.length ? Math.max(...sims.map(x => x.score)) : null;
+  $("#mathTiles").innerHTML = `
+    <div class="tile"><b>${DATI.soglia}<small>/80</small></b><span>soglia minima (58,75%)</span></div>
+    <div class="tile"><b>${DATI.sicurezza}<small>/80</small></b><span>obiettivo sicurezza (70%)</span></div>
+    <div class="tile"><b>${80 - DATI.sicurezza}</b><span>errori che puoi permetterti</span></div>
+    <div class="tile${best != null && best < DATI.sicurezza ? " hero" : ""}"><b>${best != null ? best : "—"}<small>/80</small></b><span>miglior simulazione</span></div>`;
+  const simTasks = W.flatMap(w => w.task.filter(t => t.sim).map(t => ({...t, w})));
+  $("#simList").innerHTML = `<div style="margin-top:12px">` + simTasks.map(t => {
+    const s = state.sim[t.sim] || {};
+    const cls = s.score == null ? "" : s.score >= DATI.sicurezza ? "ok" : s.score >= DATI.soglia ? "warn" : "ko";
+    return `<div class="row"><div class="lab">Simulazione ${t.sim} <span class="chip">sett. ${t.w.n}</span></div><div class="marks"><label><span>punteggio</span><input type="number" min="0" max="80" data-sim="${t.sim}" value="${s.score ?? ""}" placeholder="…"> /80</label>${s.score != null ? `<span class="chip ${cls}">${s.score >= DATI.sicurezza ? "✓ sicuro" : s.score >= DATI.soglia ? "⚠ sopra soglia" : "✗ sotto soglia"}</span>` : ""}</div></div>`;
+  }).join("") + `</div>`;
+
+  // ripassi + quiz
+  const rip = DATI.ripassi.filter(r => D(r.data) <= addDays(today, 3)).sort((a,b) => a.data.localeCompare(b.data));
+  $("#ripassi").innerHTML = rip.length
+    ? `<p class="hint"><b>Ripassi in scadenza</b> (dal LOG_ERRORI)</p><ul class="clean">${rip.map(r => `<li><span class="d ${D(r.data) < today ? "ko" : ""}">${fmt(D(r.data))}</span><span>${esc(r.testo)}</span></li>`).join("")}</ul>`
+    : `<p class="note">Nessun ripasso in scadenza. Quando fai un quiz, incolla il rapporto a Claude: gli errori finiscono nel LOG e qui compaiono alle date +1, +3, +7, +15 giorni.</p>`;
+  const qs = DATI.capitoli.filter(c => st(c.id).q != null);
+  $("#quizScores").innerHTML = qs.length
+    ? `<p class="hint" style="margin-top:12px"><b>Ultimo punteggio quiz</b></p>${qs.map(c => { const q = st(c.id).q; return `<div class="row"><div class="lab" style="min-width:0;flex:1">${esc(c.id)} · ${esc(c.titolo)}</div><span class="chip ${q >= 80 ? "ok" : q >= 60 ? "warn" : "ko"}">${q}%</span></div>`; }).join("")}`
+    : `<p class="hint">Nessun quiz registrato: scrivi la percentuale accanto al capitolo nell'obiettivo della settimana o nel piano completo.</p>`;
+
+  // scadenze
+  $("#deadlines").innerHTML = DATI.scadenze.map(s => {
+    const d = D(s.data), g = dayDiff(today, d);
+    const chip = g < 0 ? '<span class="chip">passata</span>' : g <= 14 ? `<span class="chip ko">tra ${g} g</span>` : g <= 45 ? `<span class="chip warn">tra ${g} g</span>` : `<span class="chip">tra ${g} g</span>`;
+    return `<li><span class="d">${fmt(d, {day:"numeric", month:"short", year:"2-digit"})}</span><span style="flex:1"><b>${esc(s.titolo)}</b>${s.nota ? ` <span class="hint" style="margin:0;display:inline">— ${esc(s.nota)}</span>` : ""}</span>${chip}</li>`;
+  }).join("");
+
+  // piano completo
+  const maxP = Math.max(...W.map(w => w.pagine), 1);
+  $("#bars").innerHTML = W.map((w, i) => {
+    const cls = i === wi ? "now" : w.sim ? "sim" : weekDone(w) ? "done" : "";
+    return `<div class="${cls}" style="height:${w.sim ? 30 : Math.max(4, Math.round(100*w.pagine/maxP))}%" title="Sett. ${w.n} · ${fmt(w.start)} – ${fmt(w.end)} · ${w.sim ? "simulazione + ripasso" : w.pagine + " pagine"}"></div>`;
+  }).join("");
+  $("#planTable").innerHTML = `<thead><tr><th>#</th><th>Settimana</th><th>Sezione</th><th>Capitoli e verifiche</th><th>Pag.</th><th>Stato</th></tr></thead><tbody>` + W.map((w, i) => {
+    const sez = [...new Set(w.task.filter(t => t.cap).map(t => CAP[t.cap].sez))].join(", ") || "Ripasso";
+    const done = weekDone(w);
+    const stato = i === wi ? '<span class="chip acc">in corso</span>' : done ? '<span class="chip ok">✓ fatta</span>' : w.end < today ? '<span class="chip ko">arretrata</span>' : "";
+    return `<tr class="${i === wi ? "now" : w.end < today && done ? "past" : ""}"><td class="n">${w.n}</td><td class="n">${fmt(w.start)} – ${fmt(w.end)}</td><td>${esc(sez)}</td><td>${w.task.map(taskHTML).join("")}${w.nota ? `<div class="hint">${esc(w.nota)}</div>` : ""}</td><td class="n">${w.sim ? "—" : w.pagine}</td><td>${stato}</td></tr>`;
+  }).join("") + `</tbody>`;
+
+  bind();
+}
+
+function weekDone(w){
+  return w.task.every(t => t.cap ? completo(t.cap) : t.sim ? (state.sim[t.sim] && state.sim[t.sim].score != null) : true);
+}
+function taskTitle(t){
+  if (t.cap) { const c = CAP[t.cap]; return `${c.titolo}${t.parte ? ` — ${t.parte}` : ""}`; }
+  return t.testo;
+}
+function taskHTML(t){
+  if (!t.cap) return `<div class="task"><div><div class="t">${esc(t.testo)}</div></div></div>`;
+  const c = CAP[t.cap], s = st(c.id), q = s.q;
+  const quizLink = c.quiz ? `<a href="${encodeURI(c.quiz)}">quiz HTML</a>` : `<span title="Chiedi a Claude il quiz ${c.id}">quiz da creare</span>`;
+  return `<div class="task">
+    <div><div class="t">${esc(c.titolo)}${t.parte ? ` <span class="hint" style="display:inline">— ${esc(t.parte)}</span>` : ""}</div>
+      <div class="m">pp. ${esc(c.pp)} · ${t.n ?? c.n} pag. · ${c.stato}${LOCALE ? ` · <a href="${encodeURI(c.file)}">scheda</a> · ${quizLink}` : (c.quiz ? " · quiz pronto sul PC" : "")}</div></div>
+    <div class="marks">
+      <label class="${s.l ? "on" : ""}"><input type="checkbox" data-id="${c.id}" data-k="l" ${s.l ? "checked" : ""}> letto</label>
+      <label class="${q == null ? "" : q >= 80 ? "on" : "low"}"><span>quiz</span><input type="number" min="0" max="100" data-id="${c.id}" data-k="q" value="${q ?? ""}" placeholder="%"><span>%</span></label>
+      <label class="${s.r ? "on" : ""}"><input type="checkbox" data-id="${c.id}" data-k="r" ${s.r ? "checked" : ""}> ripassato</label>
+    </div></div>`;
+}
+
+function bind(){
+  document.querySelectorAll("input[data-id]").forEach(el => {
+    el.onchange = () => {
+      const s = st(el.dataset.id), k = el.dataset.k;
+      if (k === "q") s.q = el.value === "" ? null : Math.max(0, Math.min(100, Number(el.value)));
+      else s[k] = el.checked;
+      save(); render();
+    };
+  });
+  document.querySelectorAll("input[data-sim]").forEach(el => {
+    el.onchange = () => {
+      state.sim[el.dataset.sim] = { score: el.value === "" ? null : Math.max(0, Math.min(80, Number(el.value))) };
+      save(); render();
+    };
+  });
+}
+
+/* ---------- export / import ---------- */
+function report(){
+  const wi = currentWeekIndex();
+  const nComp = DATI.capitoli.filter(c => completo(c.id)).length;
+  const lines = [`DASHBOARD · ${today.toLocaleDateString("it-IT")} · settimana ${wi < W.length ? wi+1 : "—"}/${W.length} · capitoli verificati ${nComp}/${DATI.capitoli.length} · pagine lette ${pagineLette()}/${TOT_PAG} (previste ${pagineAttese()})`];
+  DATI.capitoli.forEach(c => { const s = state.cap[c.id]; if (s && (s.l || s.q != null || s.r)) lines.push(`${c.id} | letto ${s.l ? "✓" : "✗"} | quiz ${s.q != null ? s.q + "%" : "—"} | ripasso ${s.r ? "✓" : "✗"}`); });
+  Object.entries(state.sim).forEach(([k,v]) => { if (v && v.score != null) lines.push(`SIM ${k} | ${v.score}/80`); });
+  return lines.join("\n");
+}
+$("#btnExport").onclick = async () => {
+  const txt = report(); $("#io").value = txt;
+  try { await navigator.clipboard.writeText(txt); $("#btnExport").textContent = "Copiato ✓"; } catch(e) { $("#io").select(); $("#btnExport").textContent = "Seleziona e copia"; }
+  setTimeout(() => $("#btnExport").textContent = "Copia stato per Claude", 1800);
+};
+$("#btnImport").onclick = () => {
+  const txt = $("#io").value; let n = 0;
+  txt.split(/\r?\n/).forEach(line => {
+    let m = line.match(/^(V\d-S\d-C\w+)\s*\|\s*letto\s*([✓✗])\s*\|\s*quiz\s*(\d+%|—)\s*\|\s*ripasso\s*([✓✗])/);
+    if (m && CAP[m[1]]) { const s = st(m[1]); s.l = m[2] === "✓"; s.q = m[3] === "—" ? null : parseInt(m[3]); s.r = m[4] === "✓"; n++; return; }
+    m = line.match(/^SIM\s*(\d)\s*\|\s*(\d+)\/80/);
+    if (m) { state.sim[m[1]] = {score: Number(m[2])}; n++; }
+  });
+  save(); render(); alert(n ? `Importate ${n} righe.` : "Nessuna riga riconosciuta.");
+};
+$("#btnReset").onclick = () => { if (confirm("Azzerare tutte le spunte e i punteggi salvati in questo browser?")) { state = {cap:{}, sim:{}}; save(); render(); } };
+$("#btnTheme").onclick = () => {
+  const r = document.documentElement, cur = r.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  r.dataset.theme = cur === "dark" ? "light" : "dark";
+  try { localStorage.setItem(KEY + "-theme", r.dataset.theme); } catch(e){}
+};
+try { const t = localStorage.getItem(KEY + "-theme"); if (t) document.documentElement.dataset.theme = t; } catch(e){}
+
+render();
+</script>
+</body>
+</html>
