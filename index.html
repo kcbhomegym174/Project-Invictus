@@ -292,7 +292,10 @@ const DATI = {
 const KEY = "invictus-dashboard-v1";
 /* Sul PC (file:) i link a schede e quiz funzionano; online (GitHub Pages) quei file non ci sono e i link si nascondono */
 const LOCALE = location.protocol === "file:";
-if (!LOCALE) { const l = document.getElementById("lnkSchede"); if (l) l.remove(); }
+/* Online i link vanno alla versione privata su claude.ai: #<ID> apre la scheda, #Q_<ID> il quiz */
+const SCHEDE_ONLINE = "https://claude.ai/artifact/F7Cp9AgDHRHSWRESHnSJdD";
+const extLink = (href, txt) => `<a href="${href}" target="_blank" rel="noopener">${txt}</a>`;
+if (!LOCALE) { const l = document.getElementById("lnkSchede"); if (l) { l.href = SCHEDE_ONLINE; l.target = "_blank"; l.rel = "noopener"; l.textContent = "📚 Schede e quiz"; } }
 const $ = s => document.querySelector(s);
 const D = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); };
 const D2 = dt => new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
@@ -435,7 +438,7 @@ function taskHTML(t){
   const quizLink = c.quiz ? `<a href="${encodeURI(c.quiz)}">quiz HTML</a>` : `<span title="Chiedi a Claude il quiz ${c.id}">quiz da creare</span>`;
   return `<div class="task">
     <div><div class="t">${esc(c.titolo)}${t.parte ? ` <span class="hint" style="display:inline">— ${esc(t.parte)}</span>` : ""}</div>
-      <div class="m">pp. ${esc(c.pp)} · ${t.n ?? c.n} pag. · ${c.stato}${LOCALE ? ` · <a href="${encodeURI(c.file)}">scheda</a> · ${quizLink}` : (c.quiz ? " · quiz pronto sul PC" : "")}</div></div>
+      <div class="m">pp. ${esc(c.pp)} · ${t.n ?? c.n} pag. · ${c.stato}${LOCALE ? ` · <a href="${encodeURI(c.file)}">scheda</a> · ${quizLink}` : ` · ${extLink(SCHEDE_ONLINE + "#" + c.id, "scheda")} · ${c.quiz ? extLink(SCHEDE_ONLINE + "#Q_" + c.id, "quiz") : "quiz da creare"}`}</div></div>
     <div class="marks">
       <label class="${s.l ? "on" : ""}"><input type="checkbox" data-id="${c.id}" data-k="l" ${s.l ? "checked" : ""}> letto</label>
       <label class="${q == null ? "" : q >= 80 ? "on" : "low"}"><span>quiz</span><input type="number" min="0" max="100" data-id="${c.id}" data-k="q" value="${q ?? ""}" placeholder="%"><span>%</span></label>
