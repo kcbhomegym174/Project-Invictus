@@ -43,7 +43,6 @@ a.btnlink:hover{border-color:var(--muted)}
 .card{min-width:0}
 header>div{min-width:0}
 header h1{overflow-wrap:anywhere}
-@media (max-width:600px){ .wrap{padding:16px 12px 40px} .tiles{grid-template-columns:repeat(2,minmax(0,1fr))} .row .lab{min-width:0;flex:1 1 100%} .row .val{min-width:0;text-align:left} .card h2 .sub{margin-left:0} }
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);grid-column:span 12}
 .card h2{font-size:1.02rem;font-weight:600;margin:0 0 12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .card h2 .sub{font-weight:400;color:var(--muted);font-size:.88rem;margin-left:auto}
@@ -104,6 +103,8 @@ ul.clean li .d{color:var(--muted);font-size:.82rem;min-width:88px;font-variant-n
 ul.clean li .d.ko{color:var(--ko)}
 a{color:var(--accent)}
 .hidden{display:none!important}
+/* telefono: va in fondo per vincere sulle regole generali */
+@media (max-width:600px){ .wrap{padding:16px 12px 40px} .tiles{grid-template-columns:repeat(2,minmax(0,1fr))} .row .lab{min-width:0;flex:1 1 100%} .row .val{min-width:0;text-align:left} .card h2 .sub{margin-left:0} }
 </style>
 </head>
 <body>
