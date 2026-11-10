@@ -101,6 +101,8 @@ ul.clean li{display:flex;gap:10px;align-items:baseline;padding:7px 0;border-top:
 ul.clean li:first-child{border-top:0}
 ul.clean li .d{color:var(--muted);font-size:.82rem;min-width:88px;font-variant-numeric:tabular-nums}
 ul.clean li .d.ko{color:var(--ko)}
+ul.clean li.done{opacity:.6}
+ul.clean li.done b{text-decoration:line-through}
 a{color:var(--accent)}
 .hidden{display:none!important}
 /* telefono: va in fondo per vincere sulle regole generali */
@@ -270,8 +272,9 @@ const DATI = {
     { da:"2027-05-22", task:[{sim:3, testo:"Simulazione 3: 80 domande in 90'"},{testo:"Ripasso Sez. VIII e IX dagli errori del LOG"}] },
     { da:"2027-05-29", task:[{sim:4, testo:"Simulazione 4: 80 domande in 90'"},{testo:"NUMERI.md e TRAPPOLE.md a tappeto · sabato 5 giugno riposo"}] }
   ],
+  /* fatto:true = completata: compare spuntata invece che "passata" o "tra N g" */
   scadenze: [
-    { data:"2026-11-06", titolo:"📷 Foto Sez. IV Nutrizione (78 pp)", nota:"pp. 967–974, 994–1044, 1068–1086 · poi chat Sez. IV per riscrittura e quiz" },
+    { data:"2026-11-06", titolo:"📷 Foto Sez. IV Nutrizione (78 pp)", nota:"fatte il 7/11 · manca solo p. 1086, probabilmente bianca", fatto:true },
     { data:"2026-12-11", titolo:"📷 Foto Sez. V Ricomposizione (121 pp)", nota:"pp. 1102–1126, 1153–1242, 1262–1267 · poi chat Sez. V" },
     { data:"2027-01-22", titolo:"📷 Foto Sez. VI Teoria dell'allenamento (185 pp)", nota:"pp. 1319–1346, 1371–1452, 1482–1556 · blocco più pesante: inizia durante la Sez. V, per esempio nelle feste" },
     { data:"2027-03-19", titolo:"📷 Foto Sez. VIII Metodo inVictus (71 pp)", nota:"pp. 1683–1706, 1742–1788 · poi chat Sez. VIII" },
@@ -405,8 +408,8 @@ function render(){
   // scadenze
   $("#deadlines").innerHTML = DATI.scadenze.map(s => {
     const d = D(s.data), g = dayDiff(today, d);
-    const chip = g < 0 ? '<span class="chip">passata</span>' : g <= 14 ? `<span class="chip ko">tra ${g} g</span>` : g <= 45 ? `<span class="chip warn">tra ${g} g</span>` : `<span class="chip">tra ${g} g</span>`;
-    return `<li><span class="d">${fmt(d, {day:"numeric", month:"short", year:"2-digit"})}</span><span style="flex:1"><b>${esc(s.titolo)}</b>${s.nota ? ` <span class="hint" style="margin:0;display:inline">— ${esc(s.nota)}</span>` : ""}</span>${chip}</li>`;
+    const chip = s.fatto ? '<span class="chip ok">✓ fatta</span>' : g < 0 ? '<span class="chip">passata</span>' : g <= 14 ? `<span class="chip ko">tra ${g} g</span>` : g <= 45 ? `<span class="chip warn">tra ${g} g</span>` : `<span class="chip">tra ${g} g</span>`;
+    return `<li${s.fatto ? ' class="done"' : ''}><span class="d">${fmt(d, {day:"numeric", month:"short", year:"2-digit"})}</span><span style="flex:1"><b>${esc(s.titolo)}</b>${s.nota ? ` <span class="hint" style="margin:0;display:inline">— ${esc(s.nota)}</span>` : ""}</span>${chip}</li>`;
   }).join("");
 
   // piano completo
